@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AnalyzeDotNetProject": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\sources\\AnalyzeDotNetProject\\AnalyzeDotNetProject.sln"
+    }
+  }
+}
