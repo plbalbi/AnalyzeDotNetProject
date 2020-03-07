@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Linq;
 using NuGet.ProjectModel;
+using CommandLine;
 
 namespace AnalyzeDotNetProject
 {
     class Program
     {
+        public class Options {
+            [Option('p', "path", Required = true, HelpText = "Project path")]
+            public string ProjectPath { get; set; }
+        }
         private const string COMMA_SEPARATOR = ", ";
 
         static void Main(string[] args)
         {
-            if (args.Length != 1)
-            {
-                Console.WriteLine("Missing an argument");
-                Environment.Exit(1);
-            }
+            Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(Program.RunFromOptions);
+        }
 
-            // Replace to point to your project or solution
-            string projectPath = args[0];
-
+        private static void RunFromOptions(Options options)
+        {
             var dependencyGraphService = new DependencyGraphService();
-            var dependencyGraph = dependencyGraphService.GenerateDependencyGraph(projectPath);
+            var dependencyGraph = dependencyGraphService.GenerateDependencyGraph(options.ProjectPath);
 
             foreach(var project in dependencyGraph.Projects.Where(p => p.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference))
             {
