@@ -2,6 +2,7 @@
 using System.Linq;
 using NuGet.ProjectModel;
 using CommandLine;
+using System.Diagnostics;
 
 namespace AnalyzeDotNetProject
 {
@@ -40,24 +41,47 @@ namespace AnalyzeDotNetProject
                         {
                             var projectLibrary = lockFileTargetFramework.Libraries.FirstOrDefault(library => library.Name == dependency.Name);
 
+							if (projectLibrary == null)
+							{
+							    Console.WriteLine($"Could not find matching library for dependency: {dependency.Name} - {dependency.LibraryRange.VersionRange}");
+							    continue;
+							}
+
                             ReportDependency(projectLibrary, lockFileTargetFramework, 1);
                         }
                     }
+                    else
+                    {
+                        Console.WriteLine($"Target not found for TargetFramework: {targetFramework.FrameworkName}");
+				    }
                 }
             }
         }
 
-        private static void ReportDependency(LockFileTargetLibrary projectLibrary, LockFileTarget lockFileTargetFramework, int indentLevel)
-        {
+        private static void WriteIndentationForLevel(int level)
+        { 
             // First indent
-            Console.Write(String.Concat(Enumerable.Repeat("| ", (indentLevel-1)*2)));
+            Console.Write(String.Concat(Enumerable.Repeat("| ", (level-1)*2)));
             // Then use the last two character to make the heriarchy identifier
             Console.Write("|-");
+		}
+
+        private static void ReportDependency(LockFileTargetLibrary projectLibrary, LockFileTarget lockFileTargetFramework, int indentLevel)
+        {
+            WriteIndentationForLevel(indentLevel);
+
             Console.WriteLine($"{projectLibrary.Name}, v{projectLibrary.Version}{(projectLibrary.Framework != string.Empty ? COMMA_SEPARATOR + projectLibrary.Framework : string.Empty)}");
 
             foreach (var childDependency in projectLibrary.Dependencies)
             {
                 var childLibrary = lockFileTargetFramework.Libraries.FirstOrDefault(library => library.Name == childDependency.Id);
+
+                if (childLibrary == null)
+                {
+                    WriteIndentationForLevel(indentLevel + 1);
+                    Console.WriteLine($"Could not find matching library for dependency: {childDependency.Id} - {childDependency.VersionRange}");
+                    continue;
+				}
 
                 ReportDependency(childLibrary, lockFileTargetFramework, indentLevel + 1);
             }
