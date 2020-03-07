@@ -1,4 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    
+  <UsingTask TaskName="AnalyzeDotNetProject.EnvironmentVariableWriterTask" AssemblyFile="bin/Debug/netcoreapp3.1/AnalyzeDotNetProject.dll" />
 
   <PropertyGroup>
     <Version>0.0.1</Version>
@@ -14,5 +16,9 @@
     <PackageReference Include="NuGet.ProjectModel" Version="5.4.0" />
     <PackageReference Include="Microsoft.Build" Version="16.4.0" />
   </ItemGroup>
+    
+    <Target Name="PrintEnvVars">
+        <EnvironmentVariableWriterTask />
+    </Target>
 
 </Project>
