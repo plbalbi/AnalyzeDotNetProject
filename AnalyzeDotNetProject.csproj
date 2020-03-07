@@ -3,14 +3,16 @@
   <PropertyGroup>
     <Version>0.0.1</Version>
     <OutputType>Exe</OutputType>
-    <RuntimeIdentifiers>win10-x64;ubuntu.16.10-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win10-x64;ubuntu.16.10-x64;osx-x64</RuntimeIdentifiers>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.7.82" />
     <PackageReference Include="newtonsoft.json" Version="11.0.2" />
-    <PackageReference Include="NuGet.ProjectModel" Version="4.7.0" />
+    <PackageReference Include="NuGet.Build.Tasks" Version="5.4.0" />
+    <PackageReference Include="NuGet.ProjectModel" Version="5.4.0" />
+    <PackageReference Include="Microsoft.Build" Version="16.4.0" />
   </ItemGroup>
 
 </Project>

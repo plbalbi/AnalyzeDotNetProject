@@ -2,6 +2,9 @@
 using System.Linq;
 using NuGet.ProjectModel;
 using CommandLine;
+using Microsoft.Build.Evaluation;
+using System.Collections.Generic;
+using Microsoft.Build.Execution;
 
 namespace AnalyzeDotNetProject
 {
@@ -18,10 +21,26 @@ namespace AnalyzeDotNetProject
             Parser.Default.ParseArguments<Options>(args).WithParsed<Options>(Program.RunFromOptions);
         }
 
+        public static void test(string projectFilePath)
+        {
+            ProjectCollection pc = new ProjectCollection();
+            Dictionary<string, string> GlobalProperty = new Dictionary<string, string>
+            {
+                { "Configuration", "Debug" },
+                { "Platform", "x86" },
+                { "TargetFramework", "netcoreapp3.1" },
+                { "UseLegacySdkResolver", "true" }
+            };
+            BuildRequestData BuidlRequest = new BuildRequestData(projectFilePath, GlobalProperty, null, new string[] { "GenerateRestoreGraphFile" }, null);
+            BuildResult buildResult = BuildManager.DefaultBuildManager.Build(new BuildParameters(pc), BuidlRequest);
+        }
+
         private static void RunFromOptions(Options options)
         {
             var dependencyGraphService = new DependencyGraphService();
             var dependencyGraph = dependencyGraphService.GenerateDependencyGraph(options.ProjectPath);
+
+            test(options.ProjectPath);
 
             foreach(var project in dependencyGraph.Projects.Where(p => p.RestoreMetadata.ProjectStyle == ProjectStyle.PackageReference))
             {

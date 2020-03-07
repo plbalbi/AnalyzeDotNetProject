@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NuGet.Build.Tasks;
 using NuGet.ProjectModel;
 
 namespace AnalyzeDotNetProject
@@ -13,6 +14,8 @@ namespace AnalyzeDotNetProject
     {
         public DependencyGraphSpec GenerateDependencyGraph(string projectPath)
         {
+
+            var restoreDependencyGraphTask = new WriteRestoreGraphTask();
             var dotNetRunner = new DotNetRunner();
 
             string dgOutput = Path.Combine(Path.GetTempPath(), Path.GetTempFileName());
